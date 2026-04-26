@@ -1,0 +1,31 @@
+name: Alibaba Cloud Integration
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:  # Permet de lancer manuellement
+
+jobs:
+  alibaba-cloud-job:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Afficher les clés (test)
+        run: |
+          echo "✅ AccessKey ID configuré: ${{ secrets.ALIBABA_ACCESS_KEY_ID }}"
+          echo "✅ AccessKey Secret configuré: ${{ secrets.ALIBABA_ACCESS_KEY_SECRET }}"
+          
+      - name: Installer Alibaba Cloud CLI
+        run: |
+          pip install aliyun-python-sdk-ecs
+          pip install aliyun-python-sdk-core
+          
+      - name: Ton action ici
+        run: |
+          echo "🚀 Prêt à travailler avec Alibaba Cloud !"
+          # Ajoute tes commandes ici

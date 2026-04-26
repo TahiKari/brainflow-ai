@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrainFlow AI — Chat</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        header {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-size: 1.6rem;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .links a {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            text-decoration: none;
+            margin-left: 1rem;
+        }
+        .links a:hover { color: #60a5fa; }
+        .status {
+            display: inline-block;
+            padding: 0.2rem 0.65rem;
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+        .status::before {
+            content: "●";
+            margin-right: 0.4rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 860px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 14px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            min-height: 70vh;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+        }
+        .messages::-webkit-scrollbar { width: 8px; }
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.3);
+            border-radius: 4px;
+        }
+        .msg {
+            max-width: 85%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .msg.user {
+            align-self: flex-end;
+            background: #2563eb;
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+        .msg.bot {
+            align-self: flex-start;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            border-bottom-left-radius: 4px;
+        }
+        .msg.bot.error {
+            border-color: rgba(248, 113, 113, 0.4);
+            background: rgba(127, 29, 29, 0.25);
+            color: #fca5a5;
+        }
+        .msg .meta {
+            font-size: 0.72rem;
+            color: #94a3b8;
+            margin-top: 0.45rem;
+            font-style: italic;
+        }
+        .empty {
+            color: #64748b;
+            text-align: center;
+            margin: auto;
+            font-size: 0.9rem;
+        }
+        .typing {
+            align-self: flex-start;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+        }
+        .typing::after {
+            content: "▍";
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        form {
+            display: flex;
+            gap: 0.6rem;
+            padding: 0.9rem 1rem;
+            border-top: 1px solid rgba(148, 163, 184, 0.15);
+            background: rgba(15, 23, 42, 0.6);
+        }
+        textarea {
+            flex: 1;
+            resize: none;
+            min-height: 44px;
+            max-height: 140px;
+            padding: 0.7rem 0.9rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 10px;
+            color: #e2e8f0;
+            font-family: inherit;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        textarea:focus { border-color: #60a5fa; }
+        button {
+            padding: 0 1.4rem;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        button:hover:not(:disabled) { transform: translateY(-1px); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>BrainFlow AI</h1>
+            <span class="status">Serveur en ligne</span>
+        </div>
+        <div class="links">
+            <a href="/ui/config.html">⚙️ Clés API</a>
+            <a href="/docs">📘 API docs</a>
+        </div>
+    </header>
+
+    <div class="chat-container">
+        <div class="messages" id="messages">
+            <div class="empty" id="empty">Envoyez un message pour démarrer le workflow (Planner → Router → Agents → Validator).</div>
+        </div>
+        <form id="chat-form" autocomplete="off">
+            <textarea id="input" placeholder="Posez votre question ou décrivez une tâche… (Entrée pour envoyer, Shift+Entrée pour retour ligne)" rows="1" required></textarea>
+            <button type="submit" id="send-btn">Envoyer</button>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById("chat-form");
+        const input = document.getElementById("input");
+        const btn = document.getElementById("send-btn");
+        const messagesEl = document.getElementById("messages");
+        const emptyEl = document.getElementById("empty");
+
+        // Auto-resize textarea
+        input.addEventListener("input", () => {
+            input.style.height = "auto";
+            input.style.height = Math.min(input.scrollHeight, 140) + "px";
+        });
+
+        // Entrée = envoyer, Shift+Entrée = retour ligne
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                form.requestSubmit();
+            }
+        });
+
+        function clearEmpty() {
+            if (emptyEl && emptyEl.parentNode) emptyEl.remove();
+        }
+
+        function addMessage(text, role, meta) {
+            clearEmpty();
+            const div = document.createElement("div");
+            div.className = "msg " + role;
+            div.textContent = text;
+            if (meta) {
+                const m = document.createElement("div");
+                m.className = "meta";
+                m.textContent = meta;
+                div.appendChild(m);
+            }
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+            return div;
+        }
+
+        function addTyping() {
+            clearEmpty();
+            const div = document.createElement("div");
+            div.className = "typing";
+            div.id = "typing-indicator";
+            div.textContent = "L'IA réfléchit";
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+
+        function removeTyping() {
+            const t = document.getElementById("typing-indicator");
+            if (t) t.remove();
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage(message, "user");
+            input.value = "";
+            input.style.height = "auto";
+            btn.disabled = true;
+            addTyping();
+
+            try {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message }),
+                });
+                const data = await res.json();
+                removeTyping();
+
+                if (!data.ok) {
+                    const err = data.error || data.response || "Erreur inconnue.";
+                    const node = addMessage(err, "bot");
+                    node.classList.add("error");
+                    return;
+                }
+
+                const s = data.summary || {};
+                const meta = `✅ ${s.succeeded || 0}/${s.total || 0} sous-tâches · ${s.validated || 0} validée(s)`;
+                addMessage(data.response || "(réponse vide)", "bot", meta);
+            } catch (err) {
+                removeTyping();
+                const node = addMessage("Erreur réseau : " + err.message, "bot");
+                node.classList.add("error");
+            } finally {
+                btn.disabled = false;
+                input.focus();
+            }
+        });
+
+        input.focus();
+    </script>
+</body>
+</html>

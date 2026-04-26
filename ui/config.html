@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BrainFlow AI — Configuration</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 720px;
+            width: 100%;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 16px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: #94a3b8; margin-bottom: 2rem; }
+
+        form { display: flex; flex-direction: column; gap: 1.1rem; }
+        .field { display: flex; flex-direction: column; gap: 0.4rem; }
+        label {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .input-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: stretch;
+        }
+        input[type="password"], input[type="text"] {
+            flex: 1;
+            padding: 0.7rem 0.9rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-family: "Courier New", monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        input:focus {
+            border-color: #60a5fa;
+        }
+        .toggle-btn {
+            padding: 0 0.9rem;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: color 0.15s, border-color 0.15s;
+        }
+        .toggle-btn:hover { color: #e2e8f0; border-color: #60a5fa; }
+
+        .actions {
+            margin-top: 0.8rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+        button.primary {
+            padding: 0.75rem 1.6rem;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: transform 0.1s, box-shadow 0.15s;
+        }
+        button.primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+        }
+        button.primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .message {
+            padding: 0.6rem 0.9rem;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            display: none;
+        }
+        .message.ok {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .message.err {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/ui/" class="back-link">← Retour à l'accueil</a>
+        <h1>Configuration des clés API</h1>
+        <p class="subtitle">Saisissez les clés des différents fournisseurs. Elles sont enregistrées côté serveur dans un fichier <code>.env</code>.</p>
+
+        <form id="keys-form" autocomplete="off">
+            <div class="field">
+                <label for="GROQ_API_KEY">GROQ_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="GROQ_API_KEY" name="GROQ_API_KEY" placeholder="gsk_..." />
+                    <button type="button" class="toggle-btn" data-target="GROQ_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="GEMINI_API_KEY">GEMINI_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="GEMINI_API_KEY" name="GEMINI_API_KEY" placeholder="AIza..." />
+                    <button type="button" class="toggle-btn" data-target="GEMINI_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="MISTRAL_API_KEY">MISTRAL_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="MISTRAL_API_KEY" name="MISTRAL_API_KEY" placeholder="..." />
+                    <button type="button" class="toggle-btn" data-target="MISTRAL_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="CODESTRAL_API_KEY">CODESTRAL_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="CODESTRAL_API_KEY" name="CODESTRAL_API_KEY" placeholder="..." />
+                    <button type="button" class="toggle-btn" data-target="CODESTRAL_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="OPENROUTER_API_KEY">OPENROUTER_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="OPENROUTER_API_KEY" name="OPENROUTER_API_KEY" placeholder="sk-or-..." />
+                    <button type="button" class="toggle-btn" data-target="OPENROUTER_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="DEEPSEEK_API_KEY">DEEPSEEK_API_KEY</label>
+                <div class="input-row">
+                    <input type="password" id="DEEPSEEK_API_KEY" name="DEEPSEEK_API_KEY" placeholder="sk-..." />
+                    <button type="button" class="toggle-btn" data-target="DEEPSEEK_API_KEY">Voir</button>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="primary" id="submit-btn">Enregistrer</button>
+                <div id="message" class="message"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const FIELDS = [
+            "GROQ_API_KEY",
+            "GEMINI_API_KEY",
+            "MISTRAL_API_KEY",
+            "CODESTRAL_API_KEY",
+            "OPENROUTER_API_KEY",
+            "DEEPSEEK_API_KEY",
+        ];
+
+        const form = document.getElementById("keys-form");
+        const submitBtn = document.getElementById("submit-btn");
+        const messageEl = document.getElementById("message");
+
+        function showMessage(text, type) {
+            messageEl.textContent = text;
+            messageEl.className = "message " + type;
+            messageEl.style.display = "inline-block";
+            if (type === "ok") {
+                setTimeout(() => { messageEl.style.display = "none"; }, 3500);
+            }
+        }
+
+        // Toggle visibilité des champs mot de passe
+        document.querySelectorAll(".toggle-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const input = document.getElementById(btn.dataset.target);
+                if (input.type === "password") {
+                    input.type = "text";
+                    btn.textContent = "Cacher";
+                } else {
+                    input.type = "password";
+                    btn.textContent = "Voir";
+                }
+            });
+        });
+
+        // Charger les clés existantes
+        async function loadKeys() {
+            try {
+                const res = await fetch("/api/config/keys");
+                const data = await res.json();
+                if (data.status === "ok" && data.keys) {
+                    FIELDS.forEach(f => {
+                        const input = document.getElementById(f);
+                        if (input) input.value = data.keys[f] || "";
+                    });
+                }
+            } catch (err) {
+                showMessage("Impossible de charger les clés existantes.", "err");
+            }
+        }
+
+        // Soumission du formulaire
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Enregistrement...";
+
+            const payload = {};
+            FIELDS.forEach(f => {
+                payload[f] = document.getElementById(f).value.trim();
+            });
+
+            try {
+                const res = await fetch("/api/config/keys", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+                const data = await res.json();
+                if (res.ok && data.status === "ok") {
+                    showMessage("✓ Clés enregistrées avec succès.", "ok");
+                } else {
+                    showMessage(data.message || "Erreur lors de l'enregistrement.", "err");
+                }
+            } catch (err) {
+                showMessage("Erreur réseau : " + err.message, "err");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Enregistrer";
+            }
+        });
+
+        loadKeys();
+    </script>
+</body>
+</html>
